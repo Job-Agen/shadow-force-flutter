@@ -110,7 +110,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> with WidgetsBindingObserv
         Text('Jour ${widget.day.day} · ${widget.day.title}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
         Text('Étape ${stepIndex + 1}/${widget.day.steps.length}', style: const TextStyle(color: AppColors.muted, fontSize: 11)),
       ]),
-      actions: [IconButton(onPressed: _showTechnique, icon: const Icon(Icons.info_outline))],
+      actions: [IconButton(onPressed: _showTechnique, icon: const Icon(Icons.more_vert))],
     ),
     body: SafeArea(child: Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
@@ -120,71 +120,65 @@ class _WorkoutScreenState extends State<WorkoutScreen> with WidgetsBindingObserv
           child: LinearProgressIndicator(value: (stepIndex + 1) / widget.day.steps.length, minHeight: 6, backgroundColor: AppColors.surface2),
         ),
         const SizedBox(height: 18),
-        Text(step.title.toUpperCase(), style: const TextStyle(color: AppColors.lime, fontWeight: FontWeight.w900, letterSpacing: 1.3)),
-        const SizedBox(height: 4),
-        Text(step.subtitle, style: const TextStyle(color: AppColors.muted)),
-        Expanded(child: BoxerIllustration(pose: step.pose, height: 330)),
+        Align(alignment: Alignment.centerLeft, child: Text('ÉTAPE ${stepIndex + 1} / ${widget.day.steps.length}', style: const TextStyle(color: AppColors.lime, fontWeight: FontWeight.w900, letterSpacing: 1.3))),
+        const SizedBox(height: 5),
+        Align(alignment: Alignment.centerLeft, child: Text(step.title, style: const TextStyle(fontSize: 35, fontWeight: FontWeight.w900))),
+        Align(alignment: Alignment.centerLeft, child: Text(step.subtitle, style: const TextStyle(color: AppColors.muted, fontSize: 15))),
+        Expanded(child: BoxerIllustration(pose: step.pose, height: 350, fit: BoxFit.cover)),
         Text(formatted, style: const TextStyle(fontSize: 58, fontWeight: FontWeight.w900, fontFeatures: [FontFeature.tabularFigures()])),
         const SizedBox(height: 4),
         Text(running ? 'GARDE LE CONTRÔLE' : 'PRÊT ?', style: const TextStyle(color: AppColors.muted, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
         const SizedBox(height: 18),
         Row(children: [
-          Expanded(child: OutlinedButton.icon(
-            onPressed: _showTechnique,
-            icon: const Icon(Icons.menu_book_outlined),
-            label: const Text('COMMENT FAIRE'),
-            style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(54), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17))),
-          )),
+          Expanded(child: OutlinedButton.icon(onPressed: _toggle, icon: Icon(running ? Icons.pause : Icons.play_arrow), label: Text(running ? 'PAUSE' : 'DÉMARRER'), style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(58), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))))),
           const SizedBox(width: 12),
-          SizedBox(width: 62, height: 54, child: FilledButton(onPressed: () => _next(), style: FilledButton.styleFrom(padding: EdgeInsets.zero), child: const Icon(Icons.skip_next))),
+          Expanded(child: FilledButton.icon(onPressed: () => _next(), icon: const Icon(Icons.arrow_forward), label: const Text('SUIVANT'))),
         ]),
-        const SizedBox(height: 12),
-        FilledButton.icon(onPressed: _toggle, icon: Icon(running ? Icons.pause : Icons.play_arrow), label: Text(running ? 'PAUSE' : 'DÉMARRER')),
+        const SizedBox(height: 10),
+        TextButton.icon(onPressed: _showTechnique, icon: const Icon(Icons.menu_book_outlined), label: const Text('COMMENT FAIRE')),
       ]),
     )),
   );
 
   void _showTechnique() {
     _pause();
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.surface,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: .68,
-        minChildSize: .45,
-        maxChildSize: .9,
-        builder: (context, controller) => ListView(
-          controller: controller,
-          padding: const EdgeInsets.fromLTRB(22, 12, 22, 30),
-          children: [
-            Center(child: Container(width: 44, height: 5, decoration: BoxDecoration(color: AppColors.muted, borderRadius: BorderRadius.circular(5)))),
-            const SizedBox(height: 22),
-            Text('Comment faire : ${step.title}', style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 18),
-            ...step.instructions.indexed.map((entry) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                CircleAvatar(radius: 15, backgroundColor: AppColors.lime, foregroundColor: AppColors.ink, child: Text('${entry.$1 + 1}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12))),
-                const SizedBox(width: 12),
-                Expanded(child: Text(entry.$2, style: const TextStyle(fontSize: 15, height: 1.45))),
-              ]),
-            )),
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(color: AppColors.danger.withValues(alpha: .12), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.danger.withValues(alpha: .35))),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Icon(Icons.warning_amber_rounded, color: AppColors.danger),
-                const SizedBox(width: 10),
-                Expanded(child: Text(step.mistake, style: const TextStyle(color: Color(0xFFFFB2B2), height: 1.4))),
-              ]),
-            ),
-            const SizedBox(height: 22),
-            FilledButton(onPressed: () => Navigator.pop(context), child: const Text('J’AI COMPRIS')),
-          ],
-        ),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => TechniqueScreen(step: step)));
   }
+}
+
+class TechniqueScreen extends StatelessWidget {
+  const TechniqueScreen({super.key, required this.step});
+  final ExerciseStep step;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(leading: const BackButton()),
+    body: ListView(padding: const EdgeInsets.fromLTRB(20, 0, 20, 32), children: [
+      const Text('Comment faire', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
+      Text('${step.title} puissant et propre, étape par étape.', style: const TextStyle(color: AppColors.muted, fontSize: 15)),
+      const SizedBox(height: 18),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Expanded(flex: 4, child: BoxerIllustration(pose: step.pose, height: 430, fit: BoxFit.cover, alignment: Alignment.topCenter)),
+        const SizedBox(width: 10),
+        Expanded(flex: 6, child: Column(children: step.instructions.indexed.map((entry) => Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(13), border: Border.all(color: AppColors.blue.withValues(alpha: .2))),
+          child: Row(children: [
+            CircleAvatar(radius: 18, backgroundColor: AppColors.blue, child: Text('${entry.$1 + 1}', style: const TextStyle(fontWeight: FontWeight.w900))),
+            const SizedBox(width: 10),
+            Expanded(child: Text(entry.$2, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.25))),
+          ]),
+        )).toList())),
+      ]),
+      const SizedBox(height: 8),
+      Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: AppColors.danger.withValues(alpha: .10), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.danger.withValues(alpha: .35))), child: Row(children: [
+        const Icon(Icons.warning_amber_rounded, color: AppColors.danger, size: 36), const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('À éviter', style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.w900)), Text(step.mistake, style: const TextStyle(color: Color(0xFFFFB2B2), height: 1.35))])),
+      ])),
+      const SizedBox(height: 22),
+      const Text('PETITS DÉTAILS. GRANDS PROGRÈS.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.muted, letterSpacing: 2.2, fontSize: 11)),
+    ]),
+  );
 }

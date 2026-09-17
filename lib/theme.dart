@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const ink = Color(0xFF070D18);
-  static const surface = Color(0xFF111B2C);
-  static const surface2 = Color(0xFF18253A);
-  static const lime = Color(0xFFC8FF34);
+  static const ink = Color(0xFF06111E);
+  static const surface = Color(0xFF0C1A2A);
+  static const surface2 = Color(0xFF132437);
+  static const lime = Color(0xFFC3FF38);
   static const blue = Color(0xFF41A7FF);
   static const muted = Color(0xFF98A6B9);
   static const danger = Color(0xFFFF6B6B);
@@ -40,8 +40,9 @@ ThemeData buildTheme() => ThemeData(
         ),
       ),
       navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surface,
-        indicatorColor: Color(0x33C8FF34),
+        height: 72,
+        backgroundColor: Color(0xFF081522),
+        indicatorColor: Colors.transparent,
         labelTextStyle: WidgetStatePropertyAll(
           TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         ),

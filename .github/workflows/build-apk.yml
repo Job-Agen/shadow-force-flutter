@@ -33,6 +33,9 @@ jobs:
       - name: Generate Android project
         run: flutter create --platforms=android --org com.shadowforce .
 
+      - name: Remove generated sample test
+        run: rm -f test/widget_test.dart
+
       - name: Install dependencies
         run: flutter pub get
 

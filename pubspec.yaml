@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.3.3
+  video_player: ^2.9.2
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +22,4 @@ flutter:
   assets:
     - assets/images/athlete_guard.jpg
     - assets/images/athlete_cross.jpg
+    - assets/videos/

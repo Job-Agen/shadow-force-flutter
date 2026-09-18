@@ -36,7 +36,9 @@ class _BoxerIllustrationState extends State<BoxerIllustration> {
         Pose.hook => 'assets/videos/hook.mp4',
         Pose.slip => 'assets/videos/slip.mp4',
         Pose.footwork => 'assets/videos/footwork.mp4',
-        _ => 'assets/videos/guard.mp4',
+        Pose.strength => 'assets/videos/strength.mp4',
+        Pose.breathe => 'assets/videos/breathe.mp4',
+        Pose.guard => 'assets/videos/guard.mp4',
       };
 
   String get _fallbackAsset => switch (widget.pose) {
